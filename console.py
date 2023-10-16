@@ -2,10 +2,18 @@
 """The command interpreter"""
 
 import cmd
-from models.base_model import BaseModel
-from models import storage
 import re
 import json
+from models import storage
+from shlex import split
+from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.place import Place
+from models.amenity import Amenity
+from models.review import Review
+
 
 
 class HBNBCommand(cmd.Cmd):
@@ -13,11 +21,31 @@ class HBNBCommand(cmd.Cmd):
     """Class for the command interpreter."""
 
     prompt = "(hbnb) "
+    _classes = {
+            "BaseModel",
+            "User",
+            "State",
+            "City",
+            "Place",
+            "Amenity",
+            "Review"
+    }
+
+
+    def emptyline(self):
+        """Upon receiving an empty line, do nothing"""
+        pass
 
     def default(self, line):
-        """Catch commands if nothing else matches them"""
-        # print("DEF:::", line)
-        self._precmd(line)
+        """Default behavior for the cmd module when it is not valid"""
+        #Dictionary mapping commands their modules
+        linedict = {
+            "all": self.do_all,
+            "show": self.do_show,
+            "destroy": self.d0_destroy,
+            "count": self.do_count,
+            "update": self.do_update
+        }
 
     def _precmd(self, line):
         """Intercepts commands to test for class.syntax()"""
