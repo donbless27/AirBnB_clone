@@ -1,8 +1,10 @@
 #!/usr/bin/python3
-"""The command interpreter"""
+"""The command interpreter module.
+"""
 
 import cmd
 import re
+import json
 from shlex import split
 from models import storage
 from models.base_model import BaseModel
@@ -15,39 +17,37 @@ from models.review import Review
 
 
 
-class HBNBCommand(cmd.Cmd):
-
-    """Class for the command interpreter."""
-
-    prompt = "(hbnb) "
-    _classes = {
+_classes = {
             "BaseModel",
             "User",
             "State",
             "City",
             "Place",
             "Amenity",
-            "Review"
-    }
+            "Review"}
+
+class HBNBCommand(cmd.Cmd):
+
+    """Class for the command interpreter.
+    """
+
+    prompt = "(hbnb) "
 
 
     def emptyline(self):
-        """Upon receiving an empty line, do nothing"""
+        """Upon receiving an empty line, do nothing.
+        """
         pass
 
     def default(self, line):
-        """Default behavior for the cmd module when it is not valid"""
-        #Dictionary mapping commands their modules
-        linedict = {
-            "all": self.do_all,
-            "show": self.do_show,
-            "destroy": self.d0_destroy,
-            "count": self.do_count,
-            "update": self.do_update
-        }
+        """Catch commands if nothing else matches then.
+        """
+        # print("DEF:::", line)
+        self._precmd(line)
 
     def _precmd(self, line):
-        """Intercepts commands to test for class.syntax()"""
+        """Intercepts commands to test for class.syntax().
+        """
         # print("PRECMD:::", line)
         match = re.search(r"^(\w*)\.(\w+)(?:\(([^)]*)\))$", line)
         if not match:
@@ -79,7 +79,8 @@ class HBNBCommand(cmd.Cmd):
         return command
 
     def update_dict(self, classname, uid, s_dict):
-        """The help method for update() with a dictionary"""
+        """The help method for update() with a dictionary.
+        """
         s = s_dict.replace("'", '"')
         d = json.loads(s)
         if not classname:
@@ -101,20 +102,18 @@ class HBNBCommand(cmd.Cmd):
                 storage.all()[key].save()
 
     def do_EOF(self, line):
-        """End Of File character"""
+        """End Of File character.
+        """
         print()
         return True
 
     def do_quit(self, line):
-        """Exits the program"""
+        """Exits the program.
+        """
         return True
 
-    def emptyline(self):
-        """D0 nothing on ENTER"""
-        pass
-
     def do_create(self, line):
-        """Creates an instance
+        """Creates an instance.
         """
         if line == "" or line is None:
             print("** class name missing **")
@@ -126,7 +125,7 @@ class HBNBCommand(cmd.Cmd):
             print(b.id)
 
     def do_show(self, line):
-        """Prints the string representation of an instance
+        """Prints the string representation of an instance.
         """
         if line == "" or line is None:
             print("** class name missing **")
@@ -144,7 +143,7 @@ class HBNBCommand(cmd.Cmd):
                     print(storage.all()[key])
 
     def do_destroy(self, line):
-        """Deletes an instance based on the classname and id
+        """Deletes an instance based on the classname and id.
         """
         if line == "" or line is None:
             print("** class name missing **")
@@ -163,7 +162,7 @@ class HBNBCommand(cmd.Cmd):
                     storage.save()
 
     def do_all(self, line):
-        """Prints all string representation of all instances
+        """Prints all string representation of all instances.
         """
         if line != "":
             words = line.split(' ')
@@ -178,7 +177,8 @@ class HBNBCommand(cmd.Cmd):
             print(new_list)
 
     def do_count(self, line):
-        """Counts the instances of a class"""
+        """Counts the instances of a class.
+        """
         words = line.split(' ')
         if not words[0]:
             print("** class name missing **")
@@ -191,7 +191,8 @@ class HBNBCommand(cmd.Cmd):
             print(len(matches))
 
     def do_update(self, line):
-        """Updating the attribute of an instance"""
+        """Updating the attribute of an instance.
+        """
         if line == "" or line is None:
             print("** class name missing **")
             return
